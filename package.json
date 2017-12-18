@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "dotenv": "^4.0.0",
+    "mongodb": "^3.0.0-rc0",
     "node-telegram-bot-api": "^0.29.0"
   }
 }
