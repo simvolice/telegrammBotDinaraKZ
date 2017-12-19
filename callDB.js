@@ -17,7 +17,7 @@ module.exports = {
 
             let dbPool = await ConnectDB.getDBPool();
 
-            console.log("\x1b[42m", dbPool);
+
 
             let col = dbPool.collection("cities");
 

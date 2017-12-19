@@ -7,13 +7,15 @@ const { MongoClient }= require('mongodb');
 const Logger = require('mongodb').Logger;
 Logger.setLevel('debug');
 
-let dbPool = null;
+let db = null;
+let client = null;
 
 class ConnectDB {
 
-    constructor(url){
+    constructor(url, dbName){
 
         this.url = url;
+        this.dbName = dbName;
 
     }
 
@@ -23,12 +25,13 @@ class ConnectDB {
         try {
 
 
-            dbPool = await MongoClient.connect(this.url);
+           client = await MongoClient.connect(this.url);
+           db = client.db(this.dbName);
 
 
         } catch (err) {
 
-            dbPool = err;
+            client = err;
 
 
         }
@@ -39,7 +42,7 @@ class ConnectDB {
 
     static getDBPool(){
 
-        return dbPool;
+        return db;
 
     }
 

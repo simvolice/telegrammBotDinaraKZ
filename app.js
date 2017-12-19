@@ -4,15 +4,9 @@ require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const myStem = require('./myStem');
 const ConnectDB = require('./ConnectDB');
-let connectDB = new ConnectDB(process.env.MONGO_URL_DEV);
+let connectDB = new ConnectDB(process.env.MONGO_URL_DEV, "forBots");
 
-
-async function initDB() {
-
-   await connectDB.connect();
-}
-
-initDB();
+connectDB.connect();
 
 
 // Create a bot that uses 'polling' to fetch new updates
