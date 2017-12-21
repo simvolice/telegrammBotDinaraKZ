@@ -41,8 +41,6 @@ module.exports = {
     }
 
 
-    console.log("\x1b[42m", tempArr);
-
 
 
 

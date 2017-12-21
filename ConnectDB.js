@@ -31,7 +31,7 @@ class ConnectDB {
 
         } catch (err) {
 
-            client = err;
+            db = err;
 
 
         }

@@ -2,59 +2,51 @@
  * Created by simvolice on 21.07.2017 13:50
  */
 
+
 const request = require('request');
 const util = require('util');
 const requestPromise = util.promisify(request);
+const cheerio = require('cheerio');
 
+
+async function convertFarengeihtToCelsiy(number) {
+
+    let result = (5/9) * (parseInt(number) - 32);
+
+    return result.toFixed(0);
+
+
+};
 
 
 module.exports = {
 
-  getWeather: async () => {
+  getWeather: async (coordinate) => {
 
 
-    let resultForBot = {};
+    let coord = coordinate.join(",");
 
 
-      let response = await requestPromise('http://api.openweathermap.org/data/2.5/find?q=Astana&type=accurate&mode=json&lang=ru&units=metric&appid=0f3d04b29fb15ff8fdc8e030aad094a2');
-
-      if(response.statusCode === 200){
-
+    let response = await requestPromise('https://weather.com/weather/today/l/' + coord + "?par=google");
 
 
 
 
-        resultForBot.temp = JSON.parse(response.body).list[0].main.temp;
-        resultForBot.description = JSON.parse(response.body).list[0].weather[0].description;
+    if (response.statusCode === 200) {
+        const $ = cheerio.load(response.body);
+
+
+       let resultTemperatureInCelsiy = await convertFarengeihtToCelsiy($('div.today_nowcard-temp').text());
 
 
 
 
-        return `${resultForBot.temp}°, ${resultForBot.description}`;
+       return `${resultTemperatureInCelsiy}°`;
 
+    } else {
 
-      } else {
-
-
-
-
-        return 'Извините, но сервер погоды, временно не отвечает, попробуйте позже.';
-
-
-
-
-
-      }
-
-
-
-
-
-
-
-
-
-
+        return "Сервер погоды временно не отвечает, повторите свой запрос еще раз";
+    }
 
 
 

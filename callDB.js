@@ -9,7 +9,7 @@ const ConnectDB = require("./ConnectDB");
 module.exports = {
 
 
-    getCoordinate: async (tempArr) => {
+    getCoordinate: async (itemForFind) => {
 
 
         try {
@@ -21,7 +21,35 @@ module.exports = {
 
             let col = dbPool.collection("cities");
 
-            let result = await col.find({}).toArray();
+            let result = await col.aggregate([
+
+                {$match: {}},
+
+
+                {
+                    $project: {
+
+
+                        _id: 0,
+                        coordinate: 1,
+
+                        coordinateFind : {
+                            $in: [ itemForFind, "$synonyms" ]
+                        }
+                    }
+                },
+
+                {
+                    $match: {coordinateFind: true}
+                }
+
+
+
+
+
+
+
+            ]).toArray();
 
             return result;
 
