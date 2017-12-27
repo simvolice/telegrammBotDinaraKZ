@@ -3,15 +3,14 @@
  */
 
 const weather = require('./weather');
+const railWayTickets = require('./railWayTickets');
 const callDB = require('./callDB');
 
-const request = require('request');
-const util = require('util');
-const requestPromise = util.promisify(request);
+
 
 module.exports = {
 
-  sendArg: async (tempArr) => {
+  sendArg: async (tempArr, text) => {
 
     if(tempArr.includes('погода')){
 
@@ -44,38 +43,52 @@ module.exports = {
 
     } else if (tempArr.includes('билет')) {
 
-      /*let response = await requestPromise.post('https://epay.railways.kz/ktz4/proc').form({
-
-          pa:"express3",
-          sa:"GET_P62G60_EVENT",
-          STEP:1,
-          TIME:"0123",
-          FROM_STATION:"АСТАНА-НУРЛЫ ЖОЛ(2700152)",
-        TO_STATION:"Павлодар(2708900)",
-        DATE:"19.01.2018"
-
-      });
-
-        console.log("\x1b[42m", response.body);
-*/
+        let allCities = [];
+        const regExpForFindDate = /(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(19|20)\d\d/;
+        let resultForDate = text.match(regExpForFindDate);
 
 
-        request.post({url:'https://epay.railways.kz/ktz4/proc', form: {pa:"express3",
-                sa:"GET_P62G60_EVENT",
-                STEP:1,
-                TIME:"0123",
-                FROM_STATION:"АСТАНА-НУРЛЫ ЖОЛ(2700152)",
-                TO_STATION:"Павлодар(2708900)",
-                DATE:"19.01.2018"}}, function(err,httpResponse,body){
-
-            console.log("\x1b[42m", err);
-            console.log("\x1b[42m", body);
 
 
-        })
+
+        for (let itemForFind of tempArr) {
+
+            allCities.push(await callDB.getNameCitis(itemForFind))
+        }
 
 
-        return "Пошел поиск билетов";
+
+        let flattenedArr = allCities.reduce(function(prev, curr) {
+            return [...prev, ...curr];
+        });
+
+
+
+
+
+
+        if (resultForDate === null) {
+
+            return "Вы не указали дату, укажите дату и повторите Ваш запрос.";
+
+        } else {
+
+
+            if (flattenedArr.length < 2) {
+                return "Один из городов не найден, попробуйте изменить Ваш запрос"
+            } else {
+
+                return await railWayTickets.getListTickets(flattenedArr[0].name, flattenedArr[1].name, resultForDate[0]);
+
+            }
+
+        }
+
+
+
+
+
+
 
     } else {
 

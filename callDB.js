@@ -51,6 +51,83 @@ module.exports = {
 
             ]).toArray();
 
+
+
+
+
+            return result;
+
+
+
+
+
+
+
+        } catch (err){
+
+
+            return err;
+
+
+        }
+
+
+
+
+
+
+
+
+
+    },
+
+
+    getNameCitis: async (itemForFind) => {
+
+
+        try {
+
+
+            let dbPool = await ConnectDB.getDBPool();
+
+
+
+            let col = dbPool.collection("cities");
+
+            let result = await col.aggregate([
+
+                {$match: {}},
+
+
+                {
+                    $project: {
+
+
+                        _id: 0,
+                        name: 1,
+
+                        nameCitisFind : {
+                            $in: [ itemForFind, "$synonyms" ]
+                        }
+                    }
+                },
+
+                {
+                    $match: {nameCitisFind: true}
+                }
+
+
+
+
+
+
+
+            ]).toArray();
+
+
+
+
+
             return result;
 
 

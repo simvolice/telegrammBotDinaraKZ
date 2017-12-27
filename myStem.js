@@ -44,7 +44,7 @@ module.exports = {
 
 
 
-    resultForBot = await callModule.sendArg(tempArr);
+    resultForBot = await callModule.sendArg(tempArr, text);
 
 
 
