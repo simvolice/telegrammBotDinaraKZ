@@ -5,7 +5,7 @@
 
 const { MongoClient }= require('mongodb');
 const Logger = require('mongodb').Logger;
-Logger.setLevel('debug');
+Logger.setLevel('error');
 
 let db = null;
 let client = null;
