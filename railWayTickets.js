@@ -26,11 +26,18 @@ async function generateObjForHeaderTable(headerTableRawHTML) {
     }
 
 
-    for (let [index, value] of testParseTableNew.entries()) {
-        if(value === ''){
-            testParseTableNew.splice(index, 1);
-        }
-    }
+
+
+
+    testParseTableNew = testParseTableNew.filter(function (val, index) {
+
+
+        return val !== '' && val !== ' ' && val !== 'Места:' && val !== 'Цена';
+
+    });
+
+
+
 
     let findIndex = [];
     let resultArr = [];
@@ -45,7 +52,7 @@ async function generateObjForHeaderTable(headerTableRawHTML) {
 
 
     for (let obj of findIndex) {
-        resultArr.push(testParseTableNew.slice(obj+1, obj+6));
+        resultArr.push(testParseTableNew.slice(obj+1, obj+18));
     }
 
 
@@ -53,7 +60,7 @@ async function generateObjForHeaderTable(headerTableRawHTML) {
 
     for (let valArr of resultArr) {
 
-        let [numberTrain, pathTrain, timeIn, timeOut, timeInRoad] = valArr;
+        let [numberTrain, pathTrain, timeIn, timeOut, timeInRoad, common, seat, placKart, kupe, easy, lux, commonPay, seatPay, placKartPay, kupePay, easyPay, luxPay] = valArr;
 
         objResultArr.push({
 
@@ -61,7 +68,21 @@ async function generateObjForHeaderTable(headerTableRawHTML) {
             pathTrain: pathTrain,
             timeIn: timeIn,
             timeOut: timeOut,
-            timeInRoad: timeInRoad
+            timeInRoad: timeInRoad,
+
+            common: common,
+            seat: seat,
+            placKart: placKart,
+            kupe: kupe,
+            easy: easy,
+            lux: lux,
+            commonPay: commonPay,
+            seatPay: seatPay,
+            placKartPay: placKartPay,
+            kupePay: kupePay,
+            easyPay: easyPay,
+            luxPay: luxPay
+
 
         });
     }
@@ -107,8 +128,8 @@ module.exports = {
 
 
             let parseBodyTableTest = "";
-            let cleanArr = [];
-
+            let arrResult = [];
+            let resultStr = "";
 
 
 
@@ -120,32 +141,43 @@ module.exports = {
 
 
 
-            parseBodyTableTest = parseBodyTableTest.replace(/\t/g, "");
-            parseBodyTableTest = parseBodyTableTest.replace(/\n/g, "");
 
 
 
-            //parseBodyTableTest = parseBodyTableTest.split("№");
+            arrResult = await generateObjForHeaderTable(parseBodyTableTest);
+
+
+            for (const val of arrResult) {
+
+                resultStr += `
+Номер поезда: ${val.numberTrain}
+${val.pathTrain}
+${val.timeIn}
+${val.timeOut}
+${val.timeInRoad}
+Места и стоимость:
+${val.common}: ${val.commonPay}
+${val.seat}: ${val.seatPay}
+${val.placKart}: ${val.placKartPay}
+${val.kupe}: ${val.kupePay}
+${val.easy}: ${val.easyPay}
+${val.lux}: ${val.luxPay}
+
+`
+
+            }
 
 
 
-            console.log("\x1b[42m", parseBodyTableTest);
 
 
 
-
-
-
-
-
-
-            return parseBodyTableTest;
+            return resultStr;
 
 
 
         } catch (err) {
 
-            console.log("\x1b[42m", err);
 
             return "Сервис по поиску билетов, не доступен, попробуйте позже";
 
